@@ -1,0 +1,23 @@
+html {
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+html,
+body,
+#root,
+#root__layout {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
