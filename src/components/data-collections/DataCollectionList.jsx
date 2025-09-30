@@ -26,13 +26,15 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PublishIcon from '@mui/icons-material/Publish';
 
-
-
 import SectionHeader from '../common/page-header/SectionHeader';
+import { useAuthStore } from '../../store/authStore';
 
 export default function DataCollectionList({ companyId }) {
 
   const queryClient = useQueryClient();
+
+  const { user } = useAuthStore();
+  const isRoot = user?.role === 'root';
 
   const [open, setOpen] = React.useState(false);
   const [openImport, setOpenImport] = React.useState(false);
@@ -58,7 +60,6 @@ export default function DataCollectionList({ companyId }) {
   }
 
   const handleEdit = (collection) => {
-    getDataCollectionEntries(companyId, 'a465a344-4871-4a09-8e8b-0eabdb2b4efa')
     setSelectedCollection(collection);
     setOpen(true);
   };
@@ -106,9 +107,8 @@ export default function DataCollectionList({ companyId }) {
   return (
     <Box>
       <SectionHeader
-        title="Data Collections"
-        buttonText="Add Data Collection"
-        onButtonClick={handleAdd}
+        buttonText={isRoot ? 'Add Data Collection' : ''}
+        onButtonClick={isRoot ? handleAdd : null}
         isSmallTitle={true}
       />
 
@@ -145,47 +145,49 @@ export default function DataCollectionList({ companyId }) {
                   </Button>
 
 
-                  <Box display="flex" justifyContent="space-between" gap={1} sx={{ mt: 2 }}>
-                    <Button
-                      size="small"
-                      onClick={() => handleImport(collection)}
-                      startIcon={<CloudUploadIcon />}
-                      sx={{ textTransform: 'none', fontSize: '0.875rem' }}
-                    >
-                      Import
-                    </Button>
-                    <Button
-                      size="small"
-                      onClick={() => handleEdit(collection)}
-                      startIcon={<EditIcon />}
-                      sx={{ textTransform: 'none', fontSize: '0.875rem' }}
-                    >
-                      Edit
-                    </Button>
-                    <Tooltip title="Send data to AI for processing">
-                      <span>
-                        <Button
-                          size="small"
-                          color="success"
-                          onClick={() => handlePublish(collection)}
-                          disabled={publishMutation.isLoading}
-                          startIcon={<PublishIcon />}
-                          sx={{ textTransform: 'none', fontSize: '0.875rem' }}
-                        >
-                          Publish
-                        </Button>
-                      </span>
-                    </Tooltip>
-                    <Button
-                      size="small"
-                      color="error"
-                      onClick={() => handleDelete(collection)}
-                      startIcon={<DeleteIcon />}
-                      sx={{ textTransform: 'none', fontSize: '0.875rem' }}
-                    >
-                      Delete
-                    </Button>
-                  </Box>
+                  {isRoot && (
+                    <Box display="flex" justifyContent="space-between" gap={1} sx={{ mt: 2 }}>
+                      <Button
+                        size="small"
+                        onClick={() => handleImport(collection)}
+                        startIcon={<CloudUploadIcon />}
+                        sx={{ textTransform: 'none', fontSize: '0.875rem' }}
+                      >
+                        Import
+                      </Button>
+                      <Button
+                        size="small"
+                        onClick={() => handleEdit(collection)}
+                        startIcon={<EditIcon />}
+                        sx={{ textTransform: 'none', fontSize: '0.875rem' }}
+                      >
+                        Edit
+                      </Button>
+                      <Tooltip title="Send data to AI for processing">
+                        <span>
+                          <Button
+                            size="small"
+                            color="success"
+                            onClick={() => handlePublish(collection)}
+                            disabled={publishMutation.isLoading}
+                            startIcon={<PublishIcon />}
+                            sx={{ textTransform: 'none', fontSize: '0.875rem' }}
+                          >
+                            Publish
+                          </Button>
+                        </span>
+                      </Tooltip>
+                      <Button
+                        size="small"
+                        color="error"
+                        onClick={() => handleDelete(collection)}
+                        startIcon={<DeleteIcon />}
+                        sx={{ textTransform: 'none', fontSize: '0.875rem' }}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  )}
                 </Box>
               </Card>
             </Grid>

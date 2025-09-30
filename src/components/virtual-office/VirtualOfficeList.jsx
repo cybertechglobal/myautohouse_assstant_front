@@ -110,7 +110,7 @@ export default function VirtualOfficeList({ companyId }) {
       ) : (
         <Grid container spacing={2}>
           {offices.map((office) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} >
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={office.id} >
               <Card sx={{ height: '100%', textAlign: 'center' }}>
                 <CardContent>
                   {office.background_url && (

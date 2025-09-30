@@ -177,7 +177,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
       reset({
         name: assistant.name || null,
         personality: assistant.personality || null,
-        supported_languages: assistant.supported_languages || ['en'],
+        supported_languages: assistant.supported_languages || [],
         virtual_office_id: assistant.virtual_office_id || null,
         data_collection_id: assistant.data_collection?.id || null,
         user_message_limit: assistant.user_message_limit || null,
@@ -203,7 +203,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
         name: '',
         personality: null,
         voice: null,
-        supported_languages: ['en'],
+        supported_languages: [],
         user_message_limit: '',
       });
       setUseSpeech(false);
@@ -339,6 +339,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
               getOptionLabel={(option) => option.label}
               value={PERSONALITIES.find((p) => p.value === watch('personality')) || null}
               onChange={(_, newValue) => setValue('personality', newValue?.value || '')}
+              disabled={!isRoot} 
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -457,7 +458,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
               onChange={(_, newValue) =>
                 setValue('data_collection_id', newValue?.id || '')
               }
-              disabled={dcLoading}
+              disabled={dcLoading || !isRoot}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={(params) => (
                 <TextField
@@ -483,6 +484,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
                 setValue('supported_languages', newValue.map((lang) => lang.value))
               }
               isOptionEqualToValue={(option, value) => option.value === value.value}
+              disabled={!isRoot} 
               renderInput={(params) => (
                 <TextField
                   {...params}
