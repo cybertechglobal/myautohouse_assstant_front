@@ -181,6 +181,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
         virtual_office_id: assistant.virtual_office_id || null,
         data_collection_id: assistant.data_collection?.id || null,
         user_message_limit: assistant.user_message_limit || null,
+        user_conversation_limit: assistant.user_conversation_limit || null,
         subscription_id: assistant.subscription_id || null,
       });
 
@@ -205,6 +206,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
         voice: null,
         supported_languages: [],
         user_message_limit: '',
+        user_conversation_limit: ''
       });
       setUseSpeech(false);
       setAvatar(null);
@@ -235,6 +237,9 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
       user_message_limit: data.user_message_limit
         ? parseInt(data.user_message_limit, 10)
         : undefined,
+      user_conversation_limit: data.user_conversation_limit
+        ? parseInt(data.user_conversation_limit, 10)
+        : undefined,
     };
 
     mutation.mutate({
@@ -247,7 +252,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
   };
 
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-  const activeSubscriptions = subscriptions.filter((sub) => sub.status === 'active');
+  const activeSubscriptions = subscriptions.filter((sub) => sub.status === 'active' && sub.package_id);
 
   const assignedSubscriptionIds = allAssistants
     .filter(a => a.subscription_id && (!assistant || a.id !== assistant.id))
@@ -339,7 +344,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
               getOptionLabel={(option) => option.label}
               value={PERSONALITIES.find((p) => p.value === watch('personality')) || null}
               onChange={(_, newValue) => setValue('personality', newValue?.value || '')}
-              disabled={!isRoot} 
+              disabled={!isRoot}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -399,7 +404,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
                   <li key={`${option.id}-${option.language}-${option.gender}`} {...rest}>
                     <Box display="flex" alignItems="center">
                       <Avatar src={option.avatarUrl} sx={{ width: 50, height: 50, mr: 1 }} />
-                      <span>{option.displayName || option.name}</span>
+                      <span>{option.name}-{option.language}-{option.gender}</span>
                     </Box>
                   </li>
                 );
@@ -484,7 +489,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
                 setValue('supported_languages', newValue.map((lang) => lang.value))
               }
               isOptionEqualToValue={(option, value) => option.value === value.value}
-              disabled={!isRoot} 
+              disabled={!isRoot}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -499,7 +504,7 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
                 size="small"
                 options={availableSubscriptions}
                 getOptionLabel={(option) =>
-                  `${option.package.name} (${option.package.conversations_limit} conversations - ${option.package.price} price)`
+                  `${option.package?.name} (${option.package?.conversations_limit} conversations - ${option.package?.price} price)`
                 }
                 value={subscriptions.find((sub) => sub.id === watch('subscription_id')) || null}
                 onChange={(_, newValue) => setValue('subscription_id', newValue?.id || '')}
@@ -516,15 +521,24 @@ export default function AssistantForm({ open, onClose, assistant, companyId, all
               />
             )}
 
-            {isRoot && (
-              <TextField
-                fullWidth
-                size="small"
-                label="User message limit"
-                type="number"
-                {...register('user_message_limit')}
-              />
-            )}
+            <TextField
+              fullWidth
+              size="small"
+              label="User message limit"
+              type="number"
+              disabled={!isRoot}
+              {...register('user_message_limit')}
+            />
+
+            <TextField
+              fullWidth
+              size="small"
+              label="User conversation limit"
+              type="number"
+              disabled={!isRoot}
+              {...register('user_conversation_limit')}
+            />
+
 
             {/*<TextField
               fullWidth
